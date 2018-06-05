@@ -1,0 +1,274 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sites_pslogcollector_name": {
+            "defaultValue": "pslogcollector",
+            "type": "string"
+        },
+        "serverfarms_la_pslogcollector_name": {
+            "defaultValue": "la-pslogcollector",
+            "type": "string"
+        },
+        "config_web_name": {
+            "defaultValue": "web",
+            "type": "string"
+        },
+        "storageAccounts_pslogcollector_name": {
+            "defaultValue": "pslogcollector",
+            "type": "string"
+        },
+        "hostNameBindings_pslogcollector.azurewebsites.us_name": {
+            "defaultValue": "pslogcollector.azurewebsites.us",
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "comments": "",
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "name": "[parameters('storageAccounts_pslogcollector_name')]",
+            "apiVersion": "2017-10-01",
+            "location": "usgovarizona",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "encryption": {
+                    "keySource": "Microsoft.Storage",
+                    "services": {
+                        "blob": {
+                            "enabled": true
+                        },
+                        "file": {
+                            "enabled": true
+                        }
+                    }
+                },
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "defaultAction": "Allow",
+                    "ipRules": [],
+                    "virtualNetworkRules": []
+                },
+                "supportsHttpsTrafficOnly": false
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/32e6d359-c178-4f61-9423-9b2ce6c0fe77/resourceGroups/hbl-mag-production/providers/Microsoft.Web/serverfarms/la-pslogcollector'.",
+            "type": "Microsoft.Web/serverfarms",
+            "sku": {
+                "name": "S1",
+                "tier": "Standard",
+                "size": "S1",
+                "family": "S",
+                "capacity": 1
+            },
+            "kind": "app",
+            "name": "[parameters('serverfarms_la_pslogcollector_name')]",
+            "apiVersion": "2016-09-01",
+            "location": "USGov Arizona",
+            "scale": null,
+            "properties": {
+                "name": "[parameters('serverfarms_la_pslogcollector_name')]",
+                "workerTierName": null,
+                "adminSiteName": null,
+                "hostingEnvironmentProfile": null,
+                "perSiteScaling": false,
+                "reserved": false,
+                "targetWorkerCount": 0,
+                "targetWorkerSizeId": 0
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/32e6d359-c178-4f61-9423-9b2ce6c0fe77/resourceGroups/hbl-mag-production/providers/Microsoft.Web/sites/pslogcollector'.",
+            "type": "Microsoft.Web/sites",
+            "kind": "functionapp",
+            "name": "[parameters('sites_pslogcollector_name')]",
+            "apiVersion": "2016-08-01",
+            "location": "USGov Arizona",
+            "tags": {
+                "hidden-related:/subscriptions/32e6d359-c178-4f61-9423-9b2ce6c0fe77/resourcegroups/hbl-mag-production/providers/Microsoft.Web/serverfarms/la-pslogcollector": "empty"
+            },
+            "scale": null,
+            "properties": {
+                "enabled": true,
+                "hostNameSslStates": [
+                    {
+                        "name": "[concat(parameters('sites_pslogcollector_name'),'.azurewebsites.us')]",
+                        "sslState": "Disabled",
+                        "virtualIP": null,
+                        "thumbprint": null,
+                        "toUpdate": null,
+                        "hostType": "Standard"
+                    },
+                    {
+                        "name": "[concat(parameters('sites_pslogcollector_name'),'.scm.azurewebsites.us')]",
+                        "sslState": "Disabled",
+                        "virtualIP": null,
+                        "thumbprint": null,
+                        "toUpdate": null,
+                        "hostType": "Repository"
+                    }
+                ],
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_la_pslogcollector_name'))]",
+                "reserved": false,
+                "siteConfig": null,
+                "scmSiteAlsoStopped": false,
+                "hostingEnvironmentProfile": null,
+                "clientAffinityEnabled": false,
+                "clientCertEnabled": false,
+                "hostNamesDisabled": false,
+                "containerSize": 1536,
+                "dailyMemoryTimeQuota": 0,
+                "cloningInfo": null
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_la_pslogcollector_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/32e6d359-c178-4f61-9423-9b2ce6c0fe77/resourceGroups/hbl-mag-production/providers/Microsoft.Web/sites/pslogcollector/config/web'.",
+            "type": "Microsoft.Web/sites/config",
+            "name": "[concat(parameters('sites_pslogcollector_name'), '/', parameters('config_web_name'))]",
+            "apiVersion": "2016-08-01",
+            "location": "USGov Arizona",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "numberOfWorkers": 1,
+                "defaultDocuments": [
+                    "Default.htm",
+                    "Default.html",
+                    "Default.asp",
+                    "index.htm",
+                    "index.html",
+                    "iisstart.htm",
+                    "default.aspx",
+                    "index.php"
+                ],
+                "netFrameworkVersion": "v4.0",
+                "phpVersion": "5.6",
+                "pythonVersion": "",
+                "nodeVersion": "",
+                "linuxFxVersion": "",
+                "windowsFxVersion": null,
+                "requestTracingEnabled": false,
+                "remoteDebuggingEnabled": false,
+                "remoteDebuggingVersion": "VS2012",
+                "httpLoggingEnabled": false,
+                "logsDirectorySizeLimit": 35,
+                "detailedErrorLoggingEnabled": false,
+                "publishingUsername": "$pslogcollector",
+                "publishingPassword": null,
+                "appSettings": null,
+                "metadata": null,
+                "connectionstrings": null,
+                "machineKey": null,
+                "handlerMappings": null,
+                "documentRoot": null,
+                "scmType": "None",
+                "use32BitWorkerProcess": true,
+                "webSocketsEnabled": false,
+                "alwaysOn": false,
+                "javaVersion": null,
+                "javaContainer": null,
+                "javaContainerVersion": null,
+                "appCommandLine": "",
+                "managedPipelineMode": "Integrated",
+                "virtualApplications": [
+                    {
+                    "virtualPath": "/",
+                    "physicalPath": "site\\wwwroot",
+                    "preloadEnabled": false,
+                    "virtualDirectories": null
+                    }
+                ],
+                "winAuthAdminState": 0,
+                "winAuthTenantState": 0,
+                "customAppPoolIdentityAdminState": false,
+                "customAppPoolIdentityTenantState": false,
+                "runtimeADUser": null,
+                "runtimeADUserPassword": null,
+                "loadBalancing": "LeastRequests",
+                "routingRules": [],
+                "experiments": {
+                    "rampUpRules": []
+                },
+                "limits": null,
+                "autoHealEnabled": false,
+                "autoHealRules": null,
+                "tracingOptions": null,
+                "vnetName": "",
+                "siteAuthEnabled": false,
+                "siteAuthSettings": {
+                "enabled": null,
+                "unauthenticatedClientAction": null,
+                "tokenStoreEnabled": null,
+                "allowedExternalRedirectUrls": null,
+                "defaultProvider": null,
+                "clientId": null,
+                "clientSecret": null,
+                "issuer": null,
+                "allowedAudiences": null,
+                "additionalLoginParams": null,
+                "isAadAutoProvisioned": false,
+                "googleClientId": null,
+                "googleClientSecret": null,
+                "googleOAuthScopes": null,
+                "facebookAppId": null,
+                "facebookAppSecret": null,
+                "facebookOAuthScopes": null,
+                "twitterConsumerKey": null,
+                "twitterConsumerSecret": null,
+                "microsoftAccountClientId": null,
+                "microsoftAccountClientSecret": null,
+                "microsoftAccountOAuthScopes": null
+                },
+                "cors": {
+                    "allowedOrigins": [
+                        "https://functions.azure.com",
+                        "https://functions-staging.azure.com",
+                        "https://functions-next.azure.com"
+                    ]
+                },
+                "push": null,
+                "apiDefinition": null,
+                "autoSwapSlotName": null,
+                "localMySqlEnabled": false,
+                "managedServiceIdentityId": null,
+                "xManagedServiceIdentityId": null,
+                "ipSecurityRestrictions": null,
+                "http20Enabled": false,
+                "minTlsVersion": "1.0",
+                "ftpsState": "AllAllowed"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_pslogcollector_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/32e6d359-c178-4f61-9423-9b2ce6c0fe77/resourceGroups/hbl-mag-production/providers/Microsoft.Web/sites/pslogcollector/hostNameBindings/pslogcollector.azurewebsites.us'.",
+            "type": "Microsoft.Web/sites/hostNameBindings",
+            "name": "[concat(parameters('sites_pslogcollector_name'), '/', parameters('hostNameBindings_pslogcollector.azurewebsites.us_name'))]",
+            "apiVersion": "2016-08-01",
+            "location": "USGov Arizona",
+            "scale": null,
+            "properties": {
+                "siteName": "pslogcollector",
+                "domainId": null,
+                "hostNameType": "Verified"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_pslogcollector_name'))]"
+            ]
+        }
+    ]
+}
